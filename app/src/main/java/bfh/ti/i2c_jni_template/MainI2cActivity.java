@@ -522,6 +522,7 @@ public class MainI2cActivity extends Activity {
 	        /*
 	         * Blinks LED L1
 	         */
+					textViewHeight.setText("Fillheight: " + adcReader.read_adc("in_voltage5_raw") +"mm");
 					index++;
 					Integer fillHeight=Integer.parseInt(adcReader.read_adc("in_voltage5_raw").toString());
 					if (500<fillHeight&&fillHeight<3000) {
