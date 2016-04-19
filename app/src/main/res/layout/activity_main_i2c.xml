@@ -19,47 +19,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="T1"
-                android:id="@+id/btnT1"
-                android:layout_column="0" />
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="T2"
-                android:id="@+id/btnT2"
-                android:layout_column="1" />
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="T3"
-                android:id="@+id/btnT3"
-                android:layout_column="2" />
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="T4"
-                android:id="@+id/btnT4"
-                android:layout_column="3" />
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Start"
-                android:id="@+id/btnStart"
-                android:layout_column="5" />
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Stop"
-                android:id="@+id/btnStop"
-                android:layout_column="6" />
         </TableRow>
 
         <TableRow

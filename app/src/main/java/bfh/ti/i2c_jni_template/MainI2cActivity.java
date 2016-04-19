@@ -133,14 +133,13 @@ public class MainI2cActivity extends Activity {
 
 	/* Define widgets */
 	TextView textViewHeight, tvPoti;
-	Button refreshButton, btnStop, btnStart;
+	Button refreshButton;
 
 	RadioButton mode1RBTN, mode2RBTN;
 
 	boolean direction = true;
 	int speed = 0;
 
-	ArrayList<Button> Taster;
 	ArrayList<CheckBox> LEDs;
 
 	public static MainI2cActivity Instance;
@@ -161,14 +160,11 @@ public class MainI2cActivity extends Activity {
 		Instance = this;
         TS = new TextSpeech(this);
 		adcReader = new ADC();
-		Taster = new ArrayList<Button>();
+
 		LEDs = new ArrayList<CheckBox>();
 
 		tvPoti = (TextView) findViewById(R.id.tvPoti);
-		Taster.add((Button) findViewById(R.id.btnT1));
-		Taster.add((Button) findViewById(R.id.btnT2));
-		Taster.add((Button) findViewById(R.id.btnT3));
-		Taster.add((Button) findViewById(R.id.btnT4));
+
 
 		LEDs.add((CheckBox) findViewById(R.id.cbL1));
 		LEDs.add((CheckBox) findViewById(R.id.cbL2));
@@ -178,62 +174,17 @@ public class MainI2cActivity extends Activity {
 		mode1RBTN = (RadioButton) findViewById(R.id.modeRBTN1);
 		mode2RBTN = (RadioButton) findViewById(R.id.modeRBTN2);
 
-        btnStart = (Button) findViewById(R.id.btnStart);
-        btnStop = (Button) findViewById(R.id.btnStop);
+
 
 
         /*
        * Start button has been pressed
        */
-        btnStart.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View arg0)
-            {
-                if (timer != null)
-                {
-                    timer.cancel();
-                }
 
-        /*
-         * Re-schedule timer task here
-         */
-                timer = new Timer();
-                myTimerTask = new MyTimerTask();
-
-        /*
-         * Delay 0ms, repeat in 1000ms
-         */
-                timer.schedule(myTimerTask, 0, 1000);
-            }});
 
     /*
      *  Stop button has been pressed
      */
-        btnStop.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                if (timer != null)
-                {
-                    timer.cancel();
-                    timer = null;
-
-           /*
-            * Turn LED-1 and LED-4 off
-            */
-                    gpio.write_value(LED_L1, OFF);
-                    gpio.write_value(LED_L4, OFF);
-
-           /*
-            * Reset the counter
-            */
-                    counter = 0;
-                }
-            }
-        });
-
 		CompoundButton.OnCheckedChangeListener OCL = new CompoundButton.OnCheckedChangeListener() {
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -414,10 +365,7 @@ public class MainI2cActivity extends Activity {
 
 	public void setTaster(int nbr, Boolean value) {
 		if (nbr > 3) return;
-		if (value)
-			Taster.get(nbr).setBackgroundColor(Color.YELLOW);
-		else
-			Taster.get(nbr).setBackgroundColor(Color.GRAY);
+		
 	}
 
 	void LEDTaster1() {
