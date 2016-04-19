@@ -174,10 +174,10 @@
             android:layout_height="match_parent">
 
             <TextView
-                android:id="@+id/textViewTemperature"
+                android:id="@+id/textViewheight"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Temperature"
+                android:text="Füllstandshöhe:"
                 android:textColor="#FFFFFF"
                 android:layout_above="@+id/buttonRefresh"
                 android:layout_toStartOf="@+id/buttonRefresh"

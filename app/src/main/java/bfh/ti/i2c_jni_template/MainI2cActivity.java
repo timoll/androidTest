@@ -18,11 +18,10 @@
 
 package bfh.ti.i2c_jni_template;
 
+import android.app.Activity;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
-import android.app.Activity;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
@@ -34,8 +33,8 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
+
 //import java.util.logging.Handler;
-import java.util.logging.LogRecord;
 
 public class MainI2cActivity extends Activity {
 
@@ -74,6 +73,7 @@ public class MainI2cActivity extends Activity {
 	int red;
 	int green;
 	int blue;
+	int index=0;
 
 	/*----------LED und TASTER--------------*/
 	final String LED_L1 = "61";
@@ -120,7 +120,7 @@ public class MainI2cActivity extends Activity {
 
 	boolean blinkOnOff = true;
 	boolean toggleFlag = false;
-
+	int fillState=0;
 	/* Define the widgets vars */
 	CheckBox optSingleShot;
 
@@ -132,7 +132,7 @@ public class MainI2cActivity extends Activity {
 
 
 	/* Define widgets */
-	TextView textViewTemperature, tvPoti;
+	TextView textViewHeight, tvPoti;
 	Button refreshButton, btnStop, btnStart;
 
 	RadioButton mode1RBTN, mode2RBTN;
@@ -273,7 +273,7 @@ public class MainI2cActivity extends Activity {
         /*
          * Delay 0ms, repeat in 200ms
          */
-		timer.schedule(myTimerTask, 0, 200);
+		timer.schedule(myTimerTask, 0, 100);
 
 		LEDs.get(0).setOnCheckedChangeListener(OCL);
 		LEDs.get(1).setOnCheckedChangeListener(OCL);
@@ -281,7 +281,7 @@ public class MainI2cActivity extends Activity {
 		LEDs.get(3).setOnCheckedChangeListener(OCL);
 
 
-		textViewTemperature = (TextView) findViewById(R.id.textViewTemperature);
+		textViewHeight = (TextView) findViewById(R.id.textViewheight);
 
 		refreshButton = (Button) findViewById(R.id.buttonRefresh);
 		refreshButton.setOnClickListener(new View.OnClickListener() {
@@ -388,8 +388,8 @@ public class MainI2cActivity extends Activity {
 	}
 
 	public void onTimerChangedValues(String TempStr, int color) {
-		textViewTemperature.setText("Temperature: " + TempStr);
-		textViewTemperature.setTextColor(color);
+		textViewHeight.setText("Fillheight: " + adcReader.read_adc("in_voltage5_raw") +"mm");
+		textViewHeight.setTextColor(color);
 
 	}
 
@@ -421,13 +421,17 @@ public class MainI2cActivity extends Activity {
 	}
 
 	void LEDTaster1() {
-		if (gpio.read_value(BUTTON_T1).equals(PRESSED))
+		if (gpio.read_value(BUTTON_T1).equals(PRESSED)) {
+			TS.SpeakOut(textViewHeight.getText().toString());
 			setTaster(0, true);
+		}
 		else
 			setTaster(0, false);
 
-		if (gpio.read_value(BUTTON_T2).equals(PRESSED))
+		if (gpio.read_value(BUTTON_T2).equals(PRESSED)) {
 			setTaster(1, true);
+
+		}
 		else
 			setTaster(1, false);
 
@@ -436,8 +440,10 @@ public class MainI2cActivity extends Activity {
 		else
 			setTaster(2, false);
 
-		if (gpio.read_value(BUTTON_T4).equals(PRESSED))
+		if (gpio.read_value(BUTTON_T4).equals(PRESSED)) {
 			setTaster(3, true);
+			finish();
+		}
 		else
 			setTaster(3, false);
 	}
@@ -516,14 +522,25 @@ public class MainI2cActivity extends Activity {
 	        /*
 	         * Blinks LED L1
 	         */
-					/*if (blinkOnOff) {
-						if (toggleFlag) {
+					index++;
+					Integer fillHeight=Integer.parseInt(adcReader.read_adc("in_voltage5_raw").toString());
+					if (500<fillHeight&&fillHeight<3000) {
+						if (index%10>5) {
 							gpio.write_value(LED_L1, ON);
 						} else {
 							gpio.write_value(LED_L1, OFF);
 						}
-						toggleFlag = !toggleFlag;
-					}*/
+					}
+					if(fillHeight<=500){
+						if (index%10==1) {
+							gpio.write_value(LED_L1, ON);
+						} else {
+							gpio.write_value(LED_L1, OFF);
+						}
+					}
+					if(fillHeight>=3000){
+							gpio.write_value(LED_L1, ON);
+					}
 				}
 			});
 		}
