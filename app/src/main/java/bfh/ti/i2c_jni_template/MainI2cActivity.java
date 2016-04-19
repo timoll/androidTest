@@ -23,13 +23,10 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.Menu;
-import android.view.View;
-import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.RadioButton;
 import android.widget.TextView;
 
+import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -124,17 +121,15 @@ public class MainI2cActivity extends Activity {
 	CheckBox optSingleShot;
 
 	long counter = 0;
-
+	Integer fillHeight;
 	/* Timer task */
 	Timer timer;
 	MyTimerTask myTimerTask;
 
 
 	/* Define widgets */
-	TextView textViewHeight, tvPoti;
-	Button refreshButton;
+	TextView textViewHeight;
 
-	RadioButton mode1RBTN, mode2RBTN;
 
 	boolean direction = true;
 	int speed = 0;
@@ -161,54 +156,8 @@ public class MainI2cActivity extends Activity {
 
 
 
-		tvPoti = (TextView) findViewById(R.id.tvPoti);
-
-		mode1RBTN = (RadioButton) findViewById(R.id.modeRBTN1);
-		mode2RBTN = (RadioButton) findViewById(R.id.modeRBTN2);
 
 
-
-
-        /*
-       * Start button has been pressed
-       */
-
-
-    /*
-     *  Stop button has been pressed
-     */
-		CompoundButton.OnCheckedChangeListener OCL = new CompoundButton.OnCheckedChangeListener() {
-			@Override
-			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				if (buttonView.getText().equals("L1")) {
-					if (isChecked)
-						gpio.write_value(LED_L1, ON);
-					else
-						gpio.write_value(LED_L1, OFF);
-				}
-
-				if (buttonView.getText().equals("L2")) {
-					if (isChecked)
-						gpio.write_value(LED_L2, ON);
-					else
-						gpio.write_value(LED_L2, OFF);
-				}
-
-				if (buttonView.getText().equals("L3")) {
-					if (isChecked)
-						gpio.write_value(LED_L3, ON);
-					else
-						gpio.write_value(LED_L3, OFF);
-				}
-
-				if (buttonView.getText().equals("L4")) {
-					if (isChecked)
-						gpio.write_value(LED_L4, ON);
-					else
-						gpio.write_value(LED_L4, OFF);
-				}
-			}
-		};
 
 		timer = new Timer();
 		myTimerTask = new MyTimerTask();
@@ -220,15 +169,6 @@ public class MainI2cActivity extends Activity {
 
 
 		textViewHeight = (TextView) findViewById(R.id.textViewheight);
-
-		refreshButton = (Button) findViewById(R.id.buttonRefresh);
-		refreshButton.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				DoI2C();
-                TS.SpeakOut("Hello World!");
-			}
-		});
 
 		gpio.write_value(LED_L1, OFF);
 		gpio.write_value(LED_L2, OFF);
@@ -343,9 +283,10 @@ public class MainI2cActivity extends Activity {
      * @see android.app.Activity#onStop()
      */
 	protected void onStop() {
+		Cancel();
 		android.os.Process.killProcess(android.os.Process.myPid());
 		finish();
-		Cancel();
+
 		super.onStop();
 	}
 
@@ -357,7 +298,7 @@ public class MainI2cActivity extends Activity {
 
 	void LEDTaster1() {
 		if (gpio.read_value(BUTTON_T1).equals(PRESSED)) {
-			TS.SpeakOut(textViewHeight.getText().toString());
+			TS.SpeakOut("Der aktuelle Füllstand beträgt"+fillHeight+" Millimeter", Locale.GERMAN);
 			setTaster(0, true);
 		}
 		else
@@ -377,19 +318,11 @@ public class MainI2cActivity extends Activity {
 
 		if (gpio.read_value(BUTTON_T4).equals(PRESSED)) {
 			setTaster(3, true);
+			gpio.write_value(LED_L1, OFF);
 			finish();
 		}
 		else
 			setTaster(3, false);
-	}
-
-	void LEDTaster2() {
-
-		if (gpio.read_value(BUTTON_T1).equals(PRESSED))
-			direction = !direction;
-
-
-
 	}
 
 	/*
@@ -398,6 +331,7 @@ public class MainI2cActivity extends Activity {
        */
 	@Override
 	protected void onDestroy() {
+		gpio.write_value(LED_L1, OFF);
 		Cancel();
 		super.onDestroy();
 	}
@@ -428,110 +362,34 @@ public class MainI2cActivity extends Activity {
 			runOnUiThread(new Runnable() {
 				@Override
 				public void run() {
-					if (mode1RBTN.isChecked()) {
-                        if (runOnLED)
-                            runOnLED = false;
-                        LEDTaster1();
-                    }
-					else if (mode2RBTN.isChecked()) {
-                        if(!runOnLED) {
-                            runOnLED = true;
-                            LEDRunHandler.postDelayed(LEDRun,100);
-                        }
-                        LEDTaster2();
-					}
-					tvPoti.setText(adcReader.read_adc("in_voltage5_raw"));
-           /*
-            * Update the counter and view it
-            */
 					counter++;
-
-           /*
-            * If Button T4 is pressed, turn LED L4 on
-            */
-				/*	if (gpio.read_value(BUTTON_T4).equals(PRESSED))
-						gpio.write_value(LED_L4, ON);
-					else
-						gpio.write_value(LED_L4, OFF);*/
-
-	        /*
-	         * Blinks LED L1
-	         */
-					textViewHeight.setText("Fillheight: " + adcReader.read_adc("in_voltage5_raw") +"mm");
 					index++;
-					Integer fillHeight=Integer.parseInt(adcReader.read_adc("in_voltage5_raw").toString());
-					if (500<fillHeight&&fillHeight<3000) {
+
+					fillHeight=Integer.parseInt(adcReader.read_adc("in_voltage4_raw").toString());//*2-600; //adjust range
+					LEDTaster1();
+					textViewHeight.setText("Füllstandhöhe: " + fillHeight +"mm");
+					textViewHeight.setTextSize(20);
+					if (1000<=fillHeight&&fillHeight<=3000) {
 						if (index%10>5) {
 							gpio.write_value(LED_L1, ON);
 						} else {
 							gpio.write_value(LED_L1, OFF);
 						}
 					}
-					if(fillHeight<=500){
+					if(fillHeight<1000){
 						if (index%10==1) {
 							gpio.write_value(LED_L1, ON);
 						} else {
 							gpio.write_value(LED_L1, OFF);
 						}
 					}
-					if(fillHeight>=3000){
+					if(fillHeight>3000){
 							gpio.write_value(LED_L1, ON);
 					}
 				}
 			});
 		}
 	}
-
-    private void ledOnOff(int ledPattern)
-    {
-        int i;
-        int mask = 0x01;
-
-            for (i=0; i<4; i++)
-    {
-        if ((ledPattern & mask) != 0)
-            gpio.write_value(LEDS[i], ON);
-        else
-            gpio.write_value(LEDS[i], OFF);
-        mask = mask << 1;
-    }
-    }
-
-    private Runnable LEDRun = new Runnable() {
-        int adcValue = 0;
-        int shiftRegister = 0x01;
-        @Override
-        public void run() {
-            if (LEDRunHandler == null) return;
-            adcValue = Integer.parseInt(adcReader.read_adc("in_voltage5_raw"));
-
-            if(runOnLED) {
-                if (adcValue <= 500) {
-                    LEDRunHandler.postDelayed(this, 50);
-                } else if (adcValue > 500 && adcValue <= 1000)
-                    LEDRunHandler.postDelayed(this, 250);
-                else
-                    LEDRunHandler.postDelayed(this, 1000);
-
-            }
-            if (direction)
-            {
-                ledOnOff(shiftRegister);
-                shiftRegister = shiftRegister << 1;
-                if (shiftRegister == 0x10)
-                    shiftRegister = 0x01;
-            }
-            else
-            {
-                ledOnOff(shiftRegister);
-                shiftRegister = shiftRegister >> 1;
-                if (shiftRegister == 0x00)
-                    shiftRegister = 0x08;
-            }
-
-        }
-    };
-
 }
 
 

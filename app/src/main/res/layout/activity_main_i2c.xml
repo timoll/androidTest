@@ -43,14 +43,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="Small Text"
-                android:id="@+id/tvPoti"
-                android:layout_column="0"
-                android:textIsSelectable="false" />
         </TableRow>
 
         <TableRow
@@ -112,14 +104,6 @@
                 android:layout_alignEnd="@+id/buttonRefresh"
                 android:layout_column="0" />
 
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Refresh"
-                android:id="@+id/buttonRefresh"
-                android:layout_alignParentBottom="true"
-                android:layout_centerHorizontal="true"
-                android:layout_column="1" />
         </TableRow>
 
         <TableRow
@@ -138,21 +122,6 @@
                 android:layout_column="0"
                 android:orientation="horizontal">
 
-                <RadioButton
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="M2"
-                    android:id="@+id/modeRBTN2"
-                    android:layout_column="1"
-                    android:checked="false" />
-
-                <RadioButton
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="M1"
-                    android:id="@+id/modeRBTN1"
-                    android:layout_column="0"
-                    android:checked="true" />
             </RadioGroup>
         </TableRow>
     </TableLayout>
