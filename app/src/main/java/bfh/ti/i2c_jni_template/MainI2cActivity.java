@@ -30,7 +30,6 @@ import android.widget.CompoundButton;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -140,7 +139,6 @@ public class MainI2cActivity extends Activity {
 	boolean direction = true;
 	int speed = 0;
 
-	ArrayList<CheckBox> LEDs;
 
 	public static MainI2cActivity Instance;
 
@@ -161,15 +159,9 @@ public class MainI2cActivity extends Activity {
         TS = new TextSpeech(this);
 		adcReader = new ADC();
 
-		LEDs = new ArrayList<CheckBox>();
+
 
 		tvPoti = (TextView) findViewById(R.id.tvPoti);
-
-
-		LEDs.add((CheckBox) findViewById(R.id.cbL1));
-		LEDs.add((CheckBox) findViewById(R.id.cbL2));
-		LEDs.add((CheckBox) findViewById(R.id.cbL3));
-		LEDs.add((CheckBox) findViewById(R.id.cbL4));
 
 		mode1RBTN = (RadioButton) findViewById(R.id.modeRBTN1);
 		mode2RBTN = (RadioButton) findViewById(R.id.modeRBTN2);
@@ -225,11 +217,6 @@ public class MainI2cActivity extends Activity {
          * Delay 0ms, repeat in 200ms
          */
 		timer.schedule(myTimerTask, 0, 100);
-
-		LEDs.get(0).setOnCheckedChangeListener(OCL);
-		LEDs.get(1).setOnCheckedChangeListener(OCL);
-		LEDs.get(2).setOnCheckedChangeListener(OCL);
-		LEDs.get(3).setOnCheckedChangeListener(OCL);
 
 
 		textViewHeight = (TextView) findViewById(R.id.textViewheight);
@@ -365,7 +352,7 @@ public class MainI2cActivity extends Activity {
 
 	public void setTaster(int nbr, Boolean value) {
 		if (nbr > 3) return;
-		
+
 	}
 
 	void LEDTaster1() {
